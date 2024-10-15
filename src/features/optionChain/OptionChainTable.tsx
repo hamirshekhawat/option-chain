@@ -10,12 +10,15 @@ export interface OptionChainProps {
 }
 
 export const OptionChain = (props: OptionChainProps) => {
-  const { currentData, isLoading } = useGetOptionChainQuery(props.underlying);
+  const { currentData, isLoading } = useGetOptionChainQuery({
+    underlying: props.underlying,
+    expiry: props.expiry,
+  });
   console.log(currentData);
   return (
     <div>
       {isLoading && <div>LOADING</div>}
-      {currentData && currentData[props.expiry]&& (
+      {currentData && currentData[props.expiry] && (
         <OptionsChainTable optionChain={currentData[props.expiry]} />
       )}
     </div>
@@ -50,18 +53,18 @@ export const OptionsChainTable = (data: OptionChainData) => {
               overflowY: "auto",
             }}
           >
-            {data.optionChain.map((row) => (
+            {Object.keys(data.optionChain).map((rowId) => (
               <div
-                key={row.id}
+                key={rowId}
                 className={`custom-table-row ${
-                  hoveredRow === row.id ? "hovered" : ""
+                  hoveredRow === rowId ? "hovered" : ""
                 }`}
-                onMouseEnter={() => handleMouseEnter(row.id)}
+                onMouseEnter={() => handleMouseEnter(rowId)}
                 onMouseLeave={handleMouseLeave}
               >
-                <div className="custom-table-cell">{row.callPrice}</div>
-                <div className="custom-table-cell">{row.strike}</div>
-                <div className="custom-table-cell">{row.putPrice}</div>
+                <div className="custom-table-cell">{data.optionChain[rowId].callPrice}</div>
+                <div className="custom-table-cell">{data.optionChain[rowId].strike}</div>
+                <div className="custom-table-cell">{data.optionChain[rowId].putPrice}</div>
                 {/* <div className="custom-table-cell">
                   {hoveredRow === row.id && (
                     <Button variant="contained" size="small">

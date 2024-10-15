@@ -5,6 +5,23 @@ export interface OptionChainRow {
   putPrice: number;
 }
 
-export interface OptionChainData {
-  [expiry: string]: OptionChainRow[];
+export interface OptionChainRowData {
+  id: string; // "$underlying-$strike-$expiry"
+  callPrice: number;
+  strike: number;
+  putPrice: number;
 }
+
+export interface OptionChainTable {
+  [id: string]: OptionChainRowData;
+}
+
+export interface OptionChainData {
+  [expiry: string]: OptionChainTable;
+}
+
+
+/**
+ * token: strike, option_type
+ *
+ */

@@ -24,10 +24,10 @@ function App() {
   useEffect(() => {
     if (
       contractQuery.data &&
-      contractQuery.data.length > 0 &&
       !selectedContract
     ) {
-      const firstContract = contractQuery.data[0];
+      const firstContractKey = Object.keys(contractQuery.data)[0];
+      const firstContract = contractQuery.data[firstContractKey]
       dispatch(setSelectedContract(firstContract.id));
       if (firstContract.expiries && firstContract.expiries.length > 0) {
         dispatch(setSelectedExpiry(firstContract.expiries[0]));
@@ -44,13 +44,13 @@ function App() {
   }
 
   const handleContractChange = (event: SelectChangeEvent) => {
+    if (!contractQuery.data) return;
+
     const newContract = event.target.value;
-    const contractData = contractQuery.data?.find(
-      (contract) => contract.id === newContract
-    );
+    const contractData = contractQuery.data[newContract];
     dispatch(setSelectedContract(newContract));
     if (contractData && contractData.expiries.length > 0) {
-      dispatch(setSelectedExpiry(contractData.expiries[0])); 
+      dispatch(setSelectedExpiry(contractData.expiries[0]));
     }
   };
 
@@ -62,16 +62,14 @@ function App() {
     <div className="App">
       <ContractList
         isLoading={contractQuery.isLoading}
-        contracts={contractQuery.data || []}
+        contracts={contractQuery.data || {}}
         value={selectedContract || ""}
         onChange={handleContractChange}
       />
-      {selectedContract && (
+      {contractQuery.data && selectedContract && (
         <ExpiryList
           expiryList={
-            contractQuery.data?.find(
-              (contract) => contract.id === selectedContract
-            )?.expiries || []
+            contractQuery.data[ selectedContract]?.expiries || []
           }
           selectedExpiry={selectedExpiry || ""}
           onChange={handleExpiryChange}
