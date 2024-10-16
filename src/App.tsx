@@ -10,6 +10,7 @@ import {
 } from "./features/contracts/contract.slice";
 import { ExpiryList } from "./features/expiry/ExpirySelect";
 import { useEffect } from "react";
+import { CircularProgress, Alert, Box, Button } from "@mui/material";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -22,12 +23,9 @@ function App() {
   );
 
   useEffect(() => {
-    if (
-      contractQuery.data &&
-      !selectedContract
-    ) {
+    if (contractQuery.data && !selectedContract) {
       const firstContractKey = Object.keys(contractQuery.data)[0];
-      const firstContract = contractQuery.data[firstContractKey]
+      const firstContract = contractQuery.data[firstContractKey];
       dispatch(setSelectedContract(firstContract.id));
       if (firstContract.expiries && firstContract.expiries.length > 0) {
         dispatch(setSelectedExpiry(firstContract.expiries[0]));
@@ -36,11 +34,40 @@ function App() {
   }, [contractQuery.data, selectedContract, dispatch]);
 
   if (contractQuery.isLoading) {
-    return <div>Loading contracts...</div>;
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+      >
+        <CircularProgress />
+        <div>Loading contracts...</div>
+      </Box>
+    );
   }
 
   if (contractQuery.error) {
-    return <div>Error loading contracts</div>;
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+      >
+        <Alert severity="error" style={{ marginBottom: "20px" }}>
+          Error loading contracts.
+          {"status" in contractQuery.error && contractQuery.error.status
+            ? ` Status: ${contractQuery.error.status}`
+            : ""}
+        </Alert>
+        <Button variant="contained" onClick={() => contractQuery.refetch()}>
+          Retry
+        </Button>
+      </Box>
+    );
   }
 
   const handleContractChange = (event: SelectChangeEvent) => {
@@ -68,16 +95,17 @@ function App() {
       />
       {contractQuery.data && selectedContract && (
         <ExpiryList
-          expiryList={
-            contractQuery.data[ selectedContract]?.expiries || []
-          }
+          expiryList={contractQuery.data[selectedContract]?.expiries || []}
           selectedExpiry={selectedExpiry || ""}
           onChange={handleExpiryChange}
         />
       )}
       {selectedContract && selectedExpiry && (
         <div style={{ padding: "20px" }}>
-          <OptionChain underlying={selectedContract} expiry={selectedExpiry} />
+          <OptionChain
+            underlying={selectedContract}
+            expiry={selectedExpiry}
+          />
         </div>
       )}
     </div>
