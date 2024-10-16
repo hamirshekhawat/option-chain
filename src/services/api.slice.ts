@@ -1,10 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   OptionChainData,
-  OptionChainTable,
 } from "../features/optionChain/optionChain.type";
 import {
-  ContractInfo,
   Contracts,
   TokenMap,
 } from "../features/contracts/contracts.type";
