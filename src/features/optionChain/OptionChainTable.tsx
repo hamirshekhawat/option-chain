@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Paper, Box } from "@mui/material";
 import "./OptionChain.css";
 import { useGetOptionChainQuery } from "../../services/api.slice";
-import { OptionChainData } from "./optionChain.type";
+import { OptionChainData, OptionChainTable } from "./optionChain.type";
 
 export interface OptionChainProps {
   underlying: string;
@@ -25,7 +25,11 @@ export const OptionChain = (props: OptionChainProps) => {
   );
 };
 
-export const OptionsChainTable = (data: OptionChainData) => {
+export interface OptionChainTableProps {
+  optionChain: OptionChainTable;
+}
+
+export const OptionsChainTable = (data: OptionChainTableProps) => {
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   const handleMouseEnter = (id: string) => {
@@ -62,9 +66,15 @@ export const OptionsChainTable = (data: OptionChainData) => {
                 onMouseEnter={() => handleMouseEnter(rowId)}
                 onMouseLeave={handleMouseLeave}
               >
-                <div className="custom-table-cell">{data.optionChain[rowId].callPrice}</div>
-                <div className="custom-table-cell">{data.optionChain[rowId].strike}</div>
-                <div className="custom-table-cell">{data.optionChain[rowId].putPrice}</div>
+                <div className="custom-table-cell">
+                  {data.optionChain[rowId].callPrice}
+                </div>
+                <div className="custom-table-cell">
+                  {data.optionChain[rowId].strike}
+                </div>
+                <div className="custom-table-cell">
+                  {data.optionChain[rowId].putPrice}
+                </div>
                 {/* <div className="custom-table-cell">
                   {hoveredRow === row.id && (
                     <Button variant="contained" size="small">
